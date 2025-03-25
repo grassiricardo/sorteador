@@ -20,11 +20,11 @@
     ],
     "mac": {
       "target": "dmg",
-      "icon": "assets/sorteador_icon.icns"
+      "icon": "assets/sorteador.icns"
     },
     "win": {
       "target": "nsis",
-      "icon": "assets/sorteador_icon.ico"
+      "icon": "assets/sorteador.ico"
     }
   },
   "scripts": {
