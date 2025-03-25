@@ -68,8 +68,8 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 ## 👤 Autor
 Seu Nome
-- GitHub: [@seu-usuario](https://github.com/grassiricardo)
-- LinkedIn: [Seu Nome](https://www.linkedin.com/in/grassiricardo/)
+- GitHub: [grassiricardo](https://github.com/grassiricardo)
+- LinkedIn: [Ricardo Grassi](https://www.linkedin.com/in/grassiricardo/)
 
 ---
 ⭐️ Desenvolvido com ❤️ por [Ricardo Grassi] 
