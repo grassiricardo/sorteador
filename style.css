@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #f9fafb, #eef1f5);
+  color: #1f2937;
+  margin: 0;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+  width: 100%;
+  max-width: 600px;
+}
+
+li {
+  background: white;
+  border-radius: 12px;
+  padding: 14px 20px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+}
+
+button {
+  font-family: 'Inter', sans-serif;
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  margin: 5px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+button:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(0);
+  background: #1e40af;
+}
+
+#finalizacao {
+  margin-top: 32px;
+  display: none;
+}
+
+hr {
+  width: 100%;
+  max-width: 600px;
+  border: none;
+  border-top: 1px solid #d1d5db;
+  margin: 32px 0;
+}
+
+@media (max-width: 600px) {
+  body {
+    padding: 20px;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  li {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+button.refazer {
+  background: #facc15;
+  color: #1f2937;
+}
+
+button.refazer:hover {
+  background: #eab308;
+}
+
+button.sortear {
+  background: #22c55e;
+}
+
+button.sortear:hover {
+  background: #16a34a;
+}
+
+button.voltar,
+button.perigo {
+  background: #ef4444;
+}
+
+button.voltar:hover,
+button.perigo:hover {
+  background: #dc2626;
+}
+
+input[type="text"],
+textarea {
+  width: 100%;
+  max-width: 400px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  background: white;
+  color: #111827;
+  margin-bottom: 16px;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+  border-color: #2563eb;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+#loader {
+  animation: pulse 1.5s infinite ease-in-out;
+  color: #2563eb;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.2; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+  100% { opacity: 0.2; transform: scale(1); }
+}

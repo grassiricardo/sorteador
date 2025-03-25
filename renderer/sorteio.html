@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Realizar Sorteio</title>
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+  <h1>Realizar Sorteio</h1>
+
+  <ul id="itens"></ul>
+  
+  <div id="loader" style="display: none; margin: 20px; font-size: 1.2rem; font-weight: 600;">
+    ⏳ Sorteando... Aguarde um momento!
+  </div>
+
+  <div style="margin-top: 16px;">
+    <button onclick="sortearPessoa()" class="sortear">Sortear</button>
+    <button onclick="exportarCSV()" style="display: none;">Exportar Histórico</button>
+    <button onclick="voltarTela()" class="voltar">Voltar</button>
+  </div>
+
+  <div id="finalizacao" style="margin-top: 24px; display: none;">
+    <hr />
+    <button onclick="iniciarNovoSorteio()" class="perigo">Iniciar Novo Sorteio</button>
+    <button onclick="comecarDoZero()" class="perigo">Começar do Zero</button>
+  </div>
+
+  <script src="sorteio.js"></script>  
+</body>
+</html>

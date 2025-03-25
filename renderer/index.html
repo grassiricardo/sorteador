@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Dados para o Sorteio</title>
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+  <h1>Dados para o Sorteio</h1>
+  <form style="display: flex; flex-direction: column; align-items: center;">
+    <input type="text" placeholder="Link da planilha" />
+    <textarea placeholder="Itens (1 por linha)"></textarea>
+    <hr />
+    <button type="submit" class="sortear">Iniciar Sorteio</button>  
+  </form>
+
+  <script src="index.js"></script> 
+  <script>
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+  
+      const linkInput = document.querySelector('input[type="text"]');
+      const textarea = document.querySelector('textarea');
+      const { dialog } = require('@electron/remote');
+      const path = require('path');
+
+      const link = linkInput.value.trim();
+      const rawItens = textarea.value
+        .split('\n')
+        .map(i => i.trim())
+        .filter(i => i.length > 0);
+  
+      const isLinkValido = /^https:\/\/docs\.google\.com\/spreadsheets\/d\/.+/.test(link);
+  
+      if (!isLinkValido) {
+        dialog.showMessageBox({
+          type: 'info',
+          icon: path.join(__dirname, '../assets/sorteador_icon.png'),
+          title: 'Sorteador',
+          message: 'Insira um link válido do Google Sheets.'
+        });
+        return;
+      }
+  
+      if (rawItens.length === 0) {
+        dialog.showMessageBox({
+          type: 'info',
+          icon: path.join(__dirname, '../assets/sorteador_icon.png'),
+          title: 'Sorteador',
+          message: 'Adicione pelo menos 1 item para o sorteio.'
+        });
+        return;
+      }
+  
+      const { v4: uuidv4 } = require('uuid');
+      const fs = require('fs');
+  
+      const sorteio = {
+        id: uuidv4(),
+        sheet_url: link,
+        itens: rawItens
+      };
+  
+      fs.writeFileSync(path.join(__dirname, '../data/sorteio.json'), JSON.stringify(sorteio, null, 2));
+  
+      window.location.href = 'sorteio.html';
+    });
+  </script>
+</body>
+</html>

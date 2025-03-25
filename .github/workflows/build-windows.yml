@@ -1,0 +1,31 @@
+name: Build Windows EXE
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v3
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Instalar dependências
+        run: npm install
+
+      - name: Build EXE com Electron Builder
+        run: npm run dist -- --win
+
+      - name: Upload artefato
+        uses: actions/upload-artifact@v3
+        with:
+          name: sorteador-win
+          path: dist/*.exe

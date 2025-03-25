@@ -1,0 +1,43 @@
+{
+  "name": "sorteador",
+  "version": "1.0.0",
+  "main": "main.js",
+  "build": {
+    "appId": "com.seuprojeto.sorteador",
+    "productName": "Sorteador",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "pages/**/*",
+      "scripts/**/*",
+      "data/**/*",
+      "assets/**/*",
+      "style.css",
+      "main.js",
+      "renderer/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "target": "dmg",
+      "icon": "assets/sorteador_icon.icns"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "assets/sorteador_icon.ico"
+    }
+  },
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "dependencies": {
+    "@electron/remote": "^2.1.2",
+    "papaparse": "^5.4.1",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "electron": "^28.1.3",
+    "electron-builder": "^25.1.8"
+  }
+}
