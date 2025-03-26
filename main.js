@@ -2,14 +2,14 @@ const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const remoteMain = require('@electron/remote/main');
-const limparBanco = () => {
-  const historicoPath = path.join(__dirname, 'data/historico_sorteio.json');
-  if (fs.existsSync(historicoPath)) {
-    fs.writeFileSync(historicoPath, '[]');
-  }
-};
+const { getHistoricoPath } = require('./utils/getHistoricoPathMain');
 
 remoteMain.initialize();
+
+const limparBanco = () => {
+  const historicoPath = getHistoricoPath();
+  fs.writeFileSync(historicoPath, '[]');
+};
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -23,8 +23,7 @@ function createWindow() {
   });
 
   remoteMain.enable(win.webContents);
-
-  win.loadFile('renderer/index.html')
+  win.loadFile('renderer/index.html');
 }
 
 app.whenReady().then(() => {

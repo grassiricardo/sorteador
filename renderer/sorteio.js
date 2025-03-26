@@ -4,7 +4,8 @@ const path2 = require('path');
 const { v4: uuidv4_2 } = require('uuid');
 
 let sorteio = JSON.parse(fs2.readFileSync(path2.join(__dirname, '../data/sorteio.json')));
-const historicoPath = path2.join(__dirname, '../data/historico_sorteio.json');
+const { getHistoricoPath } = require('../utils/getHistoricoPathRenderer');
+const historicoPath = getHistoricoPath();
 let historico = JSON.parse(fs2.readFileSync(historicoPath));
 
 const listaItens = document.getElementById('itens');
@@ -86,20 +87,22 @@ function sortearPessoa() {
       if (!proximoItem) {
         dialog.showMessageBox({
           type: 'info',
-          icon: path.join(__dirname, '../assets/sorteador_icon.png'),
+          icon: path.join(__dirname, '../assets/sorteador.png'),
           title: 'Sorteador',
           message: 'Todos os itens já foram sorteados.'
         });
+        esconderLoader();
         return;
       }
 
       if (participantes.length === 0) {
         dialog.showMessageBox({
           type: 'info',
-          icon: path.join(__dirname, '../assets/sorteador_icon.png'),
+          icon: path.join(__dirname, '../assets/sorteador.png'),
           title: 'Sorteador',
           message: 'Não há mais participantes disponíveis.'
         });
+        esconderLoader();
         return;
       }
 
@@ -127,7 +130,7 @@ function sortearPessoa() {
       console.error('Erro ao carregar a planilha:', error);
       dialog.showMessageBox({
         type: 'error',
-        icon: path.join(__dirname, '../assets/sorteador_icon.png'),
+        icon: path.join(__dirname, '../assets/sorteador.png'),
         title: 'Sorteador',
         message: 'Erro ao carregar a planilha. Verifique o link inserido..'
       });
@@ -179,10 +182,11 @@ function refazerSorteio(item) {
       if (participantes.length === 0){
         dialog.showMessageBox({
           type: 'info',
-          icon: path.join(__dirname, '../assets/sorteador_icon.png'),
+          icon: path.join(__dirname, '../assets/sorteador.png'),
           title: 'Sorteador',
           message: 'Não há mais participantes disponíveis para refazer o sorteio.'
         });
+        esconderLoader();
         return;
       } 
 
@@ -238,7 +242,7 @@ function exportarCSV() {
       fs2.writeFileSync(result.filePath, csv);
       dialog.showMessageBox({
         type: 'info',
-        icon: path.join(__dirname, '../assets/sorteador_icon.png'),
+        icon: path.join(__dirname, '../assets/sorteador.png'),
         title: 'Sorteador',
         message: 'Histórico exportado com sucesso!'
       });
@@ -247,7 +251,7 @@ function exportarCSV() {
     console.error('Erro ao salvar arquivo:', err);
     dialog.showMessageBox({
       type: 'info',
-      icon: path.join(__dirname, '../assets/sorteador_icon.png'),
+      icon: path.join(__dirname, '../assets/sorteador.png'),
       title: 'Sorteador',
       message: 'Ocorreu um erro ao tentar salvar o arquivo.'
     });
@@ -272,13 +276,13 @@ function verificarFimDoSorteio() {
 
 function voltarTela() {
   fs2.writeFileSync(path2.join(__dirname, '../data/sorteio.json'), '');
-  fs2.writeFileSync(path2.join(__dirname, '../data/historico_sorteio.json'), '[]');
+  fs2.writeFileSync(historicoPath, '[]');
   window.location.href = "index.html";
 }
 
 function comecarDoZero() {
   fs2.writeFileSync(path2.join(__dirname, '../data/sorteio.json'), '');
-  fs2.writeFileSync(path2.join(__dirname, '../data/historico_sorteio.json'), '[]');
+  fs2.writeFileSync(historicoPath, '[]');
   window.location.href = "index.html";
 }
 
@@ -289,7 +293,7 @@ function iniciarNovoSorteio() {
     id: novoId
   };
   fs2.writeFileSync(path2.join(__dirname, '../data/sorteio.json'), JSON.stringify(novoSorteio, null, 2));
-  fs2.writeFileSync(path2.join(__dirname, '../data/historico_sorteio.json'), '[]');
+  fs2.writeFileSync(historicoPath, '[]');
   window.location.reload();
 }
 
