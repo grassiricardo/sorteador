@@ -13,6 +13,7 @@
       "scripts/**/*",
       "data/**/*",
       "assets/**/*",
+      "utils/**/*",
       "style.css",
       "main.js",
       "renderer/**/*",
