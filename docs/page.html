@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sorteador de Itens</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #f9fafb, #e2e8f0);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    header {
+      padding: 60px 20px 30px;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    p {
+      font-size: 1.2rem;
+      color: #4b5563;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 16px;
+      margin: 32px 0;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    a.button {
+      text-decoration: none;
+      background: #2563eb;
+      color: white;
+      padding: 14px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: background 0.2s ease;
+    }
+
+    a.button:hover {
+      background: #1e40af;
+    }
+
+    iframe {
+      margin-top: 30px;
+      width: 100%;
+      max-width: 720px;
+      height: 405px;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    footer {
+      margin-top: 60px;
+      padding: 20px;
+      font-size: 0.95rem;
+      color: #6b7280;
+    }
+
+    .modelo {
+      margin-top: 16px;
+      font-size: 0.95rem;
+    }
+
+    .modelo a {
+      color: #2563eb;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .modelo a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Sorteador de Itens</h1>
+    <p>Baixe agora nosso app para sorteios automatizados de forma simples e rápida.</p>
+
+    <div class="buttons">
+      <a class="button" href="https://SEU-LINK-WINDOWS" download>⬇️ Download para Windows</a>
+      <a class="button" href="https://SEU-LINK-MAC" download>⬇️ Download para macOS</a>
+    </div>
+
+    <div class="modelo">
+      <p>📄 <a href="https://docs.google.com/spreadsheets/d/1pPdX1Aa-Z1pVdssrHKcBpH68VbynyAsx9u4i9aoxKyw/edit" target="_blank">Ver planilha modelo</a></p>
+    </div>
+  </header>
+
+  <!-- Vídeo de demonstração -->
+  <iframe src="https://www.youtube.com/embed/VIDEO_ID" title="Demonstração do App" allowfullscreen></iframe>
+
+  <footer>
+    Criado com ❤️ por <strong>Ricardo</strong> – Código aberto e gratuito.
+  </footer>
+</body>
+</html>
