@@ -224,10 +224,10 @@ textarea {
 
 .botoes-fixos hr {
   width: 100%;
-  max-width: 300px;
+  max-width: 500px;
   border: none;
   border-top: 1px solid #ccc;
-  margin: 12px 0;
+  margin: 24px auto;
 }
 
 form {
