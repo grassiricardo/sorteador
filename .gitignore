@@ -43,3 +43,6 @@ coverage/
 
 # Arquivos de debug
 *.map 
+
+# Data
+data/
