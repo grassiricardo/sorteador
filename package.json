@@ -19,10 +19,6 @@
       "renderer/**/*",
       "package.json"
     ],
-    "mac": {
-      "target": "dmg",
-      "icon": "assets/sorteador.icns"
-    },
     "win": {
       "target": "nsis",
       "icon": "assets/sorteador.ico"
