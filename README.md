@@ -2,6 +2,8 @@
 
 ![Sorteador Logo](assets/sorteador.png)
 
+[➡️ **Acesse o site oficial para baixar o app**](https://ricardograssi.info/sorteador/)
+
 ## 📝 Descrição
 Sorteador é uma aplicação desktop desenvolvida com Electron que permite realizar sorteios de forma simples e eficiente. A aplicação oferece uma interface intuitiva para importar dados e realizar sorteios aleatórios, sendo uma ferramenta útil para diversos contextos como sorteios de prêmios, seleção de participantes, entre outros.
 
