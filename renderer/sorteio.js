@@ -23,7 +23,10 @@ function updateItemDisplay(item, liElement) {
     .reverse()
     .find(h => h.item === item);
 
-  liElement.innerHTML = `${item} → ${ganhadorFinal ? ganhadorFinal.ganhador : 'Sem ganhador ainda!'} `;
+  liElement.innerHTML = `
+    <span class="item-index">${item} → </span>
+    <div class="ganhador-info">${ganhadorFinal ? ganhadorFinal.ganhador : 'Sem ganhador ainda!'}</div>
+  `;
 
   if (ganhadorFinal) {
     const refazerBtn = document.createElement('button');
@@ -55,31 +58,32 @@ function sortearPessoa() {
       const data = parsed.data;
       const { dialog } = require('@electron/remote');
       const path = require('path');
-
       const ganhadoresJaSorteados = getGanhadoresAtuais();
 
       const participantes = data
         .map(row => {
-          const nome = row['Nome']?.trim();
-          const email = row['Email']?.trim();
-          const empresa = row['Empresa']?.trim();
+          const nome = row['Nome']?.trim() || row['NOME']?.trim();
+          const email = row['Email']?.trim() || row['EMAIL']?.trim() || row['E-mail']?.trim() || row['E-MAIL']?.trim();
+          const empresa = row['Empresa']?.trim() || row['EMPRESA']?.trim();
 
           let identificador = '';
 
           if (empresa) {
-            identificador = `${nome} (${empresa})`;
+            identificador = `<strong>${nome}</strong> (${empresa})`;
           } else if (email) {
             const [usuario, dominio] = email.split('@');
             const inicio = usuario?.slice(0, 3) || '';
-            identificador = `${nome} (${inicio}...@${dominio})`;
+            identificador = `<strong>${nome}</strong> (${inicio}...@${dominio})`;
           } else {
-            identificador = nome;
+            identificador = `<strong>${nome}</strong>`;
           }
 
           return nome && identificador ? identificador : null;
         })
         .filter(p => p && !ganhadoresJaSorteados.includes(p));
 
+      
+      
       const proximoItem = sorteio.itens.find(item => {
         return !historico.some(h => h.item === item);
       });
@@ -159,26 +163,26 @@ function refazerSorteio(item) {
 
       const participantes = data
         .map(row => {
-          const nome = row['Nome']?.trim();
-          const email = row['Email']?.trim();
-          const empresa = row['Empresa']?.trim();
+          const nome = row['Nome']?.trim() || row['NOME']?.trim();
+          const email = row['Email']?.trim() || row['EMAIL']?.trim() || row['E-mail']?.trim() || row['E-MAIL']?.trim();
+          const empresa = row['Empresa']?.trim() || row['EMPRESA']?.trim();
 
           let identificador = '';
 
           if (empresa) {
-            identificador = `${nome} (${empresa})`;
+            identificador = `<strong>${nome}</strong> (${empresa})`;
           } else if (email) {
             const [usuario, dominio] = email.split('@');
             const inicio = usuario?.slice(0, 3) || '';
-            identificador = `${nome} (${inicio}...@${dominio})`;
+            identificador = `<strong>${nome}</strong> (${inicio}...@${dominio})`;
           } else {
-            identificador = nome;
+            identificador = `<strong>${nome}</strong>`;
           }
 
           return nome && identificador ? identificador : null;
         })
         .filter(p => p && !ganhadoresJaSorteados.includes(p));
-
+      
       if (participantes.length === 0){
         dialog.showMessageBox({
           type: 'info',

@@ -8,8 +8,22 @@
 <body>
   <h1>Dados para o Sorteio</h1>
   <form style="display: flex; flex-direction: column; align-items: center;">
-    <input type="text" placeholder="Link da planilha" />
-    <textarea placeholder="Itens (1 por linha)"></textarea>
+    <div class="input-com-tooltip">
+      <input type="text" placeholder="Link da planilha (Google Sheets)" />
+      <div class="tooltip-wrapper">
+        <span class="tooltip-icon">?</span>
+        <div class="tooltip-text">
+          Copie o link da planilha do navegador  e cole aqui! <br />
+          <br />
+          OBS: Deixar a planilha com acesso a qualquer pessoa.
+        </div>
+      </div>
+    </div>
+    
+    <small style="display: block; margin-top: -30px;">
+      <a href="#" id="link-exemplo">Ver planilha modelo</a>
+    </small>
+    <textarea placeholder="Itens a serem sorteados (1 por linha)"></textarea>
     <hr />
     <button type="submit" class="sortear">Iniciar Sorteio</button>  
   </form>
@@ -24,13 +38,18 @@
       const textarea = document.querySelector('textarea');
       const { dialog } = require('@electron/remote');
       const path = require('path');
+      const fs = require('fs');
+      const { v4: uuidv4 } = require('uuid');
 
       const link = linkInput.value.trim();
       const rawItens = textarea.value
         .split('\n')
         .map(i => i.trim())
         .filter(i => i.length > 0);
-  
+
+      // Remove duplicados mantendo a ordem
+      const itensUnicos = [...new Set(rawItens)];
+
       const isLinkValido = /^https:\/\/docs\.google\.com\/spreadsheets\/d\/.+/.test(link);
   
       if (!isLinkValido) {
@@ -43,7 +62,7 @@
         return;
       }
   
-      if (rawItens.length === 0) {
+      if (itensUnicos.length === 0) {
         dialog.showMessageBox({
           type: 'info',
           icon: path.join(__dirname, '../assets/sorteador.png'),
@@ -52,19 +71,31 @@
         });
         return;
       }
-  
-      const { v4: uuidv4 } = require('uuid');
-      const fs = require('fs');
+
+      if (itensUnicos.length !== rawItens.length) {
+        dialog.showMessageBox({
+          type: 'warning',
+          icon: path.join(__dirname, '../assets/sorteador.png'),
+          title: 'Itens duplicados detectados',
+          message: 'Itens duplicados foram removidos automaticamente para evitar erros no sorteio.'
+        });
+      }
   
       const sorteio = {
         id: uuidv4(),
         sheet_url: link,
-        itens: rawItens
+        itens: itensUnicos
       };
   
       fs.writeFileSync(path.join(__dirname, '../data/sorteio.json'), JSON.stringify(sorteio, null, 2));
-  
       window.location.href = 'sorteio.html';
+    });
+
+    const { shell } = require('electron');
+
+    document.getElementById('link-exemplo').addEventListener('click', (e) => {
+      e.preventDefault();
+      shell.openExternal('https://docs.google.com/spreadsheets/d/1pPdX1Aa-Z1pVdssrHKcBpH68VbynyAsx9u4i9aoxKyw/edit');
     });
   </script>
 </body>

@@ -23,6 +23,7 @@ function createWindow() {
   });
 
   remoteMain.enable(win.webContents);
+  win.maximize();
   win.loadFile('renderer/index.html');
 }
 

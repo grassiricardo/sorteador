@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
+* {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
 body {
   font-family: 'Inter', sans-serif;
   background: linear-gradient(135deg, #f9fafb, #eef1f5);
@@ -10,12 +15,15 @@ body {
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
+  overflow-x: hidden;
+  width: 100vw;
 }
 
 h1 {
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 30px;
+  text-align: center;
 }
 
 ul {
@@ -23,7 +31,7 @@ ul {
   padding: 0;
   margin: 0 0 20px;
   width: 100%;
-  max-width: 600px;
+  max-width: 900px;
 }
 
 li {
@@ -32,10 +40,31 @@ li {
   padding: 14px 20px;
   margin-bottom: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   font-weight: 500;
+}
+
+#itens li {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  background: #fff;
+  border-radius: 16px;
+  padding: 18px 24px;
+  margin: 12px 0;
+  font-size: 18px;
+  width: 100%;
+  max-width: 100%;
+  word-break: break-word;
+  gap: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  flex-wrap: wrap;
+}
+
+#itens li > div {
+  flex-grow: 1;
+  min-width: 0;
+  overflow: hidden;
+  word-break: break-word;
 }
 
 button {
@@ -49,6 +78,7 @@ button {
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s ease, transform 0.1s ease;
+  white-space: nowrap;
 }
 
 button:hover {
@@ -87,6 +117,11 @@ hr {
     flex-direction: column;
     align-items: flex-start;
   }
+
+  #itens li {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
 }
 
 button.refazer {
@@ -119,12 +154,12 @@ button.perigo:hover {
 input[type="text"],
 textarea {
   width: 100%;
-  max-width: 400px;
+  max-width: 500px;
   padding: 12px 14px;
   border-radius: 8px;
   border: 1px solid #d1d5db;
   font-family: 'Inter', sans-serif;
-  font-size: 1rem;
+  font-size: 1.05rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   transition: all 0.2s ease;
   background: white;
@@ -140,7 +175,7 @@ textarea:focus {
 }
 
 textarea {
-  min-height: 100px;
+  min-height: 120px;
   resize: vertical;
 }
 
@@ -153,4 +188,119 @@ textarea {
   0% { opacity: 0.2; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.05); }
   100% { opacity: 0.2; transform: scale(1); }
+}
+
+.lista-container {
+  max-height: 60vh;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  padding-right: 8px;
+  width: 100%;
+  max-width: 900px;
+}
+
+.botoes-fixos {
+  position: sticky;
+  bottom: 0;
+  background: #ffffff;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  border-radius: 24px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  max-width: 900px;
+  width: 100%;
+  margin-top: 24px;
+}
+
+.botoes-fixos > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+.botoes-fixos hr {
+  width: 100%;
+  max-width: 300px;
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 12px 0;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+  gap: 20px;
+}
+
+.input-com-tooltip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.input-com-tooltip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.tooltip-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tooltip-icon {
+  width: 24px;
+  height: 24px;
+  background: #e5e7eb;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  line-height: 24px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.tooltip-text {
+  position: absolute;
+  top: 32px;
+  left: -140px; /* posiciona mais à esquerda */
+  background-color: #1f2937;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+  display: none;
+  z-index: 10;
+  max-width: 280px;
+  white-space: normal; /* permite quebra de linha */
+  word-break: break-word;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.tooltip-wrapper:hover .tooltip-text {
+  display: block;
+}
+
+button {
+  font-size: 1rem;
+  padding: 14px 22px;
+  border-radius: 10px;
 }
