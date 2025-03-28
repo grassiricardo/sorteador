@@ -13,7 +13,7 @@
       <div class="tooltip-wrapper">
         <span class="tooltip-icon">?</span>
         <div class="tooltip-text">
-          Copie o link da planilha do navegador  e cole aqui! <br />
+          Copie o link da planilha do navegador e cole aqui! <br />
           <br />
           OBS: Deixar a planilha com acesso a qualquer pessoa.
         </div>
@@ -37,6 +37,7 @@
       const linkInput = document.querySelector('input[type="text"]');
       const textarea = document.querySelector('textarea');
       const { dialog } = require('@electron/remote');
+      const app = require('@electron/remote').app;
       const path = require('path');
       const fs = require('fs');
       const { v4: uuidv4 } = require('uuid');
@@ -47,7 +48,6 @@
         .map(i => i.trim())
         .filter(i => i.length > 0);
 
-      // Remove duplicados mantendo a ordem
       const itensUnicos = [...new Set(rawItens)];
 
       const isLinkValido = /^https:\/\/docs\.google\.com\/spreadsheets\/d\/.+/.test(link);
@@ -87,7 +87,10 @@
         itens: itensUnicos
       };
   
-      fs.writeFileSync(path.join(__dirname, '../data/sorteio.json'), JSON.stringify(sorteio, null, 2));
+      const userDataPath = app.getPath('userData');
+      const savePath = path.join(userDataPath, 'sorteio.json');
+      fs.writeFileSync(savePath, JSON.stringify(sorteio, null, 2));
+
       window.location.href = 'sorteio.html';
     });
 
