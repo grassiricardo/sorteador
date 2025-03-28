@@ -1,12 +1,17 @@
 const Papa = require('papaparse');
 const fs2 = require('fs');
 const path2 = require('path');
+const { app } = require('@electron/remote');
 const { v4: uuidv4_2 } = require('uuid');
 
-let sorteio = JSON.parse(fs2.readFileSync(path2.join(__dirname, '../data/sorteio.json')));
-const { getHistoricoPath } = require('../utils/getHistoricoPathRenderer');
-const historicoPath = getHistoricoPath();
-let historico = JSON.parse(fs2.readFileSync(historicoPath));
+const userDataPath = app.getPath('userData');
+const sorteioPath = path2.join(userDataPath, 'sorteio.json');
+const historicoPath = path2.join(userDataPath, 'historico_sorteio.json');
+
+let sorteio = JSON.parse(fs2.readFileSync(sorteioPath));
+let historico = fs2.existsSync(historicoPath)
+  ? JSON.parse(fs2.readFileSync(historicoPath))
+  : [];
 
 const listaItens = document.getElementById('itens');
 sorteio.itens.forEach((item, index) => {
@@ -19,10 +24,7 @@ sorteio.itens.forEach((item, index) => {
 atualizarVisibilidadeExportar();
 
 function updateItemDisplay(item, liElement) {
-  const ganhadorFinal = [...historico]
-    .reverse()
-    .find(h => h.item === item);
-
+  const ganhadorFinal = [...historico].reverse().find(h => h.item === item);
   liElement.innerHTML = `
     <span class="item-index">${item} → </span>
     <div class="ganhador-info">${ganhadorFinal ? ganhadorFinal.ganhador : 'Sem ganhador ainda!'}</div>
@@ -47,25 +49,21 @@ function getGanhadoresAtuais() {
 
 function sortearPessoa() {
   mostrarLoader();
-
   setTimeout(() => {
     const sheetUrl = getSheetCSVUrl(sorteio.sheet_url);
-
     fetch(sheetUrl)
-    .then(res => res.text())
-    .then(csvText => {
-      const parsed = Papa.parse(csvText, { header: true });
-      const data = parsed.data;
-      const { dialog } = require('@electron/remote');
-      const path = require('path');
-      const ganhadoresJaSorteados = getGanhadoresAtuais();
+      .then(res => res.text())
+      .then(csvText => {
+        const parsed = Papa.parse(csvText, { header: true });
+        const data = parsed.data;
+        const { dialog } = require('@electron/remote');
+        const path = require('path');
+        const ganhadoresJaSorteados = getGanhadoresAtuais();
 
-      const participantes = data
-        .map(row => {
+        const participantes = data.map(row => {
           const nome = row['Nome']?.trim() || row['NOME']?.trim();
           const email = row['Email']?.trim() || row['EMAIL']?.trim() || row['E-mail']?.trim() || row['E-MAIL']?.trim();
           const empresa = row['Empresa']?.trim() || row['EMPRESA']?.trim();
-
           let identificador = '';
 
           if (empresa) {
@@ -79,94 +77,86 @@ function sortearPessoa() {
           }
 
           return nome && identificador ? identificador : null;
-        })
-        .filter(p => p && !ganhadoresJaSorteados.includes(p));
+        }).filter(p => p && !ganhadoresJaSorteados.includes(p));
 
-      
-      
-      const proximoItem = sorteio.itens.find(item => {
-        return !historico.some(h => h.item === item);
-      });
+        const proximoItem = sorteio.itens.find(item => !historico.some(h => h.item === item));
 
-      if (!proximoItem) {
+        if (!proximoItem) {
+          dialog.showMessageBox({
+            type: 'info',
+            icon: path.join(__dirname, '../assets/sorteador.png'),
+            title: 'Sorteador',
+            message: 'Todos os itens já foram sorteados.'
+          });
+          esconderLoader();
+          return;
+        }
+
+        if (participantes.length === 0) {
+          dialog.showMessageBox({
+            type: 'info',
+            icon: path.join(__dirname, '../assets/sorteador.png'),
+            title: 'Sorteador',
+            message: 'Não há mais participantes disponíveis.'
+          });
+          esconderLoader();
+          return;
+        }
+
+        const ganhador = participantes[Math.floor(Math.random() * participantes.length)];
+        const novoId = uuidv4_2();
+
+        historico.push({
+          id: novoId,
+          sorteio_id: sorteio.id,
+          item: proximoItem,
+          ganhador,
+          data: new Date().toISOString()
+        });
+
+        salvarHistoricoOrdenado();
+
+        const li = document.getElementById(`item-${sorteio.itens.indexOf(proximoItem)}`);
+        updateItemDisplay(proximoItem, li);
+        verificarFimDoSorteio();
+        atualizarVisibilidadeExportar();
+        esconderLoader();
+      })
+      .catch(error => {
+        esconderLoader();
+        console.error('Erro ao carregar a planilha:', error);
         dialog.showMessageBox({
-          type: 'info',
+          type: 'error',
           icon: path.join(__dirname, '../assets/sorteador.png'),
           title: 'Sorteador',
-          message: 'Todos os itens já foram sorteados.'
+          message: 'Erro ao carregar a planilha. Verifique o link inserido.'
         });
-        esconderLoader();
-        return;
-      }
-
-      if (participantes.length === 0) {
-        dialog.showMessageBox({
-          type: 'info',
-          icon: path.join(__dirname, '../assets/sorteador.png'),
-          title: 'Sorteador',
-          message: 'Não há mais participantes disponíveis.'
-        });
-        esconderLoader();
-        return;
-      }
-
-      const ganhador = participantes[Math.floor(Math.random() * participantes.length)];
-      const novoId = uuidv4_2();
-
-      historico.push({
-        id: novoId,
-        sorteio_id: sorteio.id,
-        item: proximoItem,
-        ganhador,
-        data: new Date().toISOString()
       });
-
-      salvarHistoricoOrdenado();
-
-      const li = document.getElementById(`item-${sorteio.itens.indexOf(proximoItem)}`);
-      updateItemDisplay(proximoItem, li);
-      verificarFimDoSorteio();
-      atualizarVisibilidadeExportar();
-      esconderLoader();
-    })
-    .catch(error => {
-      esconderLoader();
-      console.error('Erro ao carregar a planilha:', error);
-      dialog.showMessageBox({
-        type: 'error',
-        icon: path.join(__dirname, '../assets/sorteador.png'),
-        title: 'Sorteador',
-        message: 'Erro ao carregar a planilha. Verifique o link inserido..'
-      });
-    });
   }, 4000);
 }
 
 function refazerSorteio(item) {
   mostrarLoader();
-
   setTimeout(() => {
     const sheetUrl = getSheetCSVUrl(sorteio.sheet_url);
     fetch(sheetUrl)
-    .then(res => res.text())
-    .then(csvText => {
-      const parsed = Papa.parse(csvText, { header: true });
-      const data = parsed.data;
-      const { dialog } = require('@electron/remote');
-      const path = require('path');
+      .then(res => res.text())
+      .then(csvText => {
+        const parsed = Papa.parse(csvText, { header: true });
+        const data = parsed.data;
+        const { dialog } = require('@electron/remote');
+        const path = require('path');
 
-      const ganhadoresJaSorteados = getGanhadoresAtuais()
-        .filter(g => {
-          const ultimo = [...historico].reverse().find(h => h.item === item);
-          return g !== ultimo?.ganhador;
-        });
+        const ganhadoresJaSorteados = getGanhadoresAtuais()
+          .filter(g => {
+            const ultimo = [...historico].reverse().find(h => h.item === item);
+            return g !== ultimo?.ganhador;
+          });
 
-      const participantes = data
-        .map(row => {
+        const participantes = data.map(row => {
           const nome = row['Nome']?.trim() || row['NOME']?.trim();
           const email = row['Email']?.trim() || row['EMAIL']?.trim() || row['E-mail']?.trim() || row['E-MAIL']?.trim();
           const empresa = row['Empresa']?.trim() || row['EMPRESA']?.trim();
-
           let identificador = '';
 
           if (empresa) {
@@ -180,39 +170,38 @@ function refazerSorteio(item) {
           }
 
           return nome && identificador ? identificador : null;
-        })
-        .filter(p => p && !ganhadoresJaSorteados.includes(p));
-      
-      if (participantes.length === 0){
-        dialog.showMessageBox({
-          type: 'info',
-          icon: path.join(__dirname, '../assets/sorteador.png'),
-          title: 'Sorteador',
-          message: 'Não há mais participantes disponíveis para refazer o sorteio.'
+        }).filter(p => p && !ganhadoresJaSorteados.includes(p));
+
+        if (participantes.length === 0) {
+          dialog.showMessageBox({
+            type: 'info',
+            icon: path.join(__dirname, '../assets/sorteador.png'),
+            title: 'Sorteador',
+            message: 'Não há mais participantes disponíveis para refazer o sorteio.'
+          });
+          esconderLoader();
+          return;
+        }
+
+        const novoGanhador = participantes[Math.floor(Math.random() * participantes.length)];
+        const novoId = uuidv4_2();
+
+        historico.push({
+          id: novoId,
+          sorteio_id: sorteio.id,
+          item,
+          ganhador: novoGanhador,
+          data: new Date().toISOString()
         });
+
+        salvarHistoricoOrdenado();
+
+        const li = document.getElementById(`item-${sorteio.itens.indexOf(item)}`);
+        updateItemDisplay(item, li);
+        verificarFimDoSorteio();
+        atualizarVisibilidadeExportar();
         esconderLoader();
-        return;
-      } 
-
-      const novoGanhador = participantes[Math.floor(Math.random() * participantes.length)];
-      const novoId = uuidv4_2();
-
-      historico.push({
-        id: novoId,
-        sorteio_id: sorteio.id,
-        item,
-        ganhador: novoGanhador,
-        data: new Date().toISOString()
       });
-
-      salvarHistoricoOrdenado();
-
-      const li = document.getElementById(`item-${sorteio.itens.indexOf(item)}`);
-      updateItemDisplay(item, li);
-      verificarFimDoSorteio();
-      atualizarVisibilidadeExportar();
-      esconderLoader();
-    });
   }, 4000);
 }
 
@@ -233,7 +222,7 @@ function getSheetCSVUrl(originalUrl) {
 }
 
 function exportarCSV() {
-  const { dialog } = require('electron').remote || require('@electron/remote');
+  const { dialog } = require('@electron/remote');
   const csv = Papa.unparse(historico);
   const path = require('path');
 
@@ -279,13 +268,13 @@ function verificarFimDoSorteio() {
 }
 
 function voltarTela() {
-  fs2.writeFileSync(path2.join(__dirname, '../data/sorteio.json'), '');
+  fs2.writeFileSync(sorteioPath, '');
   fs2.writeFileSync(historicoPath, '[]');
   window.location.href = "index.html";
 }
 
 function comecarDoZero() {
-  fs2.writeFileSync(path2.join(__dirname, '../data/sorteio.json'), '');
+  fs2.writeFileSync(sorteioPath, '');
   fs2.writeFileSync(historicoPath, '[]');
   window.location.href = "index.html";
 }
@@ -296,7 +285,7 @@ function iniciarNovoSorteio() {
     ...sorteio,
     id: novoId
   };
-  fs2.writeFileSync(path2.join(__dirname, '../data/sorteio.json'), JSON.stringify(novoSorteio, null, 2));
+  fs2.writeFileSync(sorteioPath, JSON.stringify(novoSorteio, null, 2));
   fs2.writeFileSync(historicoPath, '[]');
   window.location.reload();
 }
